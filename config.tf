@@ -5,7 +5,7 @@ variable "location"    { default = "westeurope"}
 variable "ssh_key"    { default = "<PUBLIC SSH KEY>"}
 
 //Your profile name , must be placed in Ressources/ (Just the name here, not path!)
-variable "PROFILE_FILE"    { default = "WindowsUpdateCobalt.profile" }
+variable "PROFILE_FILE"    { default = "jquery-c2.4.2.profile" }
 
 #Use a long password instead of special chars, migh break bash command
 variable "TEAM_PASS"    { default = "<TEAM SERVER PASSWORD>" }
