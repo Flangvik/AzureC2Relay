@@ -39,6 +39,7 @@ variable "nic_sec_name"    { default = "relay-nsg" }
 variable "subnet_one_name"    { default = "vm-subnet" }
 variable "subnet_two_name"    { default = "func-subnet" }
 variable "vnet_name"    { default = "relay-vnet" }
+variable "ai_name"    { default = "appai" }
 
 variable "func_zip_path"    { default = "AzureC2Relay.zip" }
 

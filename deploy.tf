@@ -70,6 +70,7 @@ resource "azurerm_function_app" "func" {
     MalleableProfileB64                          = "${data.local_file.ParseMalleable.content}"
     RealC2EndPoint								= "https://${azurerm_linux_virtual_machine.vm.private_ip_address}:443/"
   	DecoyRedirect								= "${var.decoy_website}"
+	APPINSIGHTS_INSTRUMENTATIONKEY				= "${azurerm_application_insights.funcai.instrumentation_key}"
     
     }
 
@@ -79,11 +80,21 @@ resource "azurerm_function_app" "func" {
 
    depends_on = [
     azurerm_linux_virtual_machine.vm,
-    data.local_file.ParseMalleable
+    data.local_file.ParseMalleable,
+	azurerm_application_insights.funcai
   ]
   
 
 }
+
+resource "azurerm_application_insights" "funcai" {
+  name                = "${var.uniq_prefix}${var.ai_name}"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  application_type    = "web"
+}
+
+
 
 resource "azurerm_virtual_network" "vnet" {
   name                = "${var.uniq_prefix}${var.vnet_name}"
@@ -235,8 +246,9 @@ resource "azurerm_linux_virtual_machine" "vm" {
  
 	  inline = [
       "echo \"${var.ssh_key}\" >> ~/.ssh/authorized_keys",
-      "sudo apt-get update -y",
-      "sudo apt-get install openjdk-11-jre openjdk-11-jdk openjdk-11-jdk-headless -y",
+      "sudo apt update -y",
+      "sudo apt -f install openjdk-11-jre-headless -y",
+	  "sudo apt -f install openjdk-11-jdk-headless -y",
       "tar xvf cobaltstrike-dist.tgz",
       "rm cobaltstrike-dist.tgz",
       "cd cobaltstrike", 
