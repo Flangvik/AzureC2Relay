@@ -1,0 +1,102 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "cdn_profile_name": {
+            "type": "String"
+        },
+		 "endpoint_name": {
+            "type": "String"
+        },
+		 "app_func_name": {
+            "type": "String"
+        },
+		 "location": {
+            "defaultValue": "westeurope",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Cdn/profiles",
+            "apiVersion": "2020-04-15",
+            "name": "[parameters('cdn_profile_name')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard_Verizon"
+            },
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Cdn/profiles/endpoints",
+            "apiVersion": "2020-04-15",
+            "name": "[concat(parameters('cdn_profile_name'), '/', parameters('endpoint_name'))]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Cdn/profiles', parameters('cdn_profile_name'))]"
+            ],
+            "properties": {
+                "originHostHeader": "[parameters('app_func_name')]",
+                "contentTypesToCompress": [
+                    "text/plain",
+                    "text/html",
+                    "text/css",
+                    "text/javascript",
+                    "application/x-javascript",
+                    "application/javascript",
+                    "application/json",
+                    "application/xml"
+                ],
+                "isCompressionEnabled": true,
+                "isHttpAllowed": true,
+                "isHttpsAllowed": true,
+                "queryStringCachingBehavior": "BypassCaching",
+                "optimizationType": "GeneralWebDelivery",
+                "origins": [
+                    {
+                        "name": "[ replace( parameters('app_func_name'), '.', '-') ]",
+                        "properties": {
+                            "hostName": "[parameters('app_func_name')]",
+                            "enabled": true
+                        }
+                    }
+                ],
+                "originGroups": [],
+                "geoFilters": [],
+                "deliveryPolicy": {
+                    "rules": [
+                        {
+                            "order": 0,
+                            "conditions": [],
+                            "actions": [
+                                {
+                                    "name": "CacheExpiration",
+                                    "parameters": {
+                                        "cacheBehavior": "BypassCache",
+                                        "cacheType": "All",
+                                        "@odata.type": "#Microsoft.Azure.Cdn.Models.DeliveryRuleCacheExpirationActionParameters"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "urlSigningKeys": []
+            }
+        },
+        {
+            "type": "Microsoft.Cdn/profiles/endpoints/origins",
+            "apiVersion": "2020-04-15",
+            "name": "[concat(parameters('cdn_profile_name'), '/' , parameters('endpoint_name') , '/' , replace( parameters('app_func_name'), '.', '-'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Cdn/profiles/endpoints', parameters('cdn_profile_name'), parameters('endpoint_name'))]",
+                "[resourceId('Microsoft.Cdn/profiles', parameters('cdn_profile_name'))]"
+            ],
+            "properties": {
+                "hostName": "[parameters('app_func_name')]",
+                "enabled": true
+            }
+        }
+    ]
+}
