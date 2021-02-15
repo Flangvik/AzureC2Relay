@@ -4,7 +4,7 @@ AzureC2Relay is an Azure Function that validates and relays Cobalt Strike beacon
 
 ![flow diagram](/images/AzureRelay.png)
 
-# Dependencies
+# Deploy
 AzureC2Relay is deployed via terraform azure modules as well as some local az cli commands
 
 Make sure you have terraform , az cli and the dotnet core 3.1 runtime installed
@@ -36,9 +36,8 @@ sudo cp terraform /usr/local/bin/terraform
 pip3 install azure-cli
 ```
 
-# Deploy
 
-1. Modify the first few variables defined in `config.tf` to match your setup
+1. Modify the first variables defined in `config.tf` to suit your needs
 1. Replace the dummy "cobaltstrike-dist.tgz" with an actual cobaltstrike download 
 2. Edit/Replace the Malleable profile inside the Ressources folder (Make sure the profile filename matches the variables you set in step 1)
 2. login with azure `az login` 
