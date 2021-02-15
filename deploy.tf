@@ -275,13 +275,34 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
 }
 
+
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [null_resource.funcrestart]
+
+  create_duration = "60s"
+}
+
+
+
+resource "null_resource" "funcrestart" {
+
+  provisioner "local-exec" {
+    command = "az functionapp restart --name ${var.func_name} --resource-group ${azurerm_resource_group.rg.name}"
+	}
+
+ depends_on = [
+    azurerm_app_service_virtual_network_swift_connection.funcass,
+  ]
+
+}
+
 resource "null_resource" "funcdep" {
   provisioner "local-exec" {
     command = "az functionapp deployment source config-zip -g ${azurerm_resource_group.rg.name} -n ${var.func_name} --src ${var.func_zip_path} --build-remote true"
   }
 
  depends_on = [
-    azurerm_app_service_virtual_network_swift_connection.funcass,
+    time_sleep.wait_60_seconds,
   ]
 
 }
