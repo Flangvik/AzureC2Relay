@@ -27,13 +27,24 @@ brew install hashicorp/tap/terraform
 brew install azure-cli
 ```
 
-Linux (Kali)
+Ubuntu , Debian
 ```
 curl -L https://dot.net/v1/dotnet-install.sh | bash -s --  --runtime dotnet --version 3.1.0
 wget https://releases.hashicorp.com/terraform/0.14.5/terraform_0.14.5_linux_amd64.zip
 unzip terraform_0.14.5_linux_amd64.zip
 sudo cp terraform /usr/local/bin/terraform
-pip3 install azure-cli
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+```
+
+Kali
+```
+curl -L https://dot.net/v1/dotnet-install.sh | bash -s --  --runtime dotnet --version 3.1.0
+wget https://releases.hashicorp.com/terraform/0.14.5/terraform_0.14.5_linux_amd64.zip
+unzip terraform_0.14.5_linux_amd64.zip
+sudo cp terraform /usr/local/bin/terraform
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ stretch main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
+curl -L https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+sudo apt-get update && sudo apt-get install apt-transport-https azure-cli
 ```
 
 
